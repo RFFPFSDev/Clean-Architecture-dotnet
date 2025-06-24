@@ -72,7 +72,7 @@ It depends on Application and Domain, but they don’t depend on it. This keeps 
 <pre>
 📁 Infra
 ├── 📁 Infra.IoC
-├──📁 Infra.Database
+├── 📁 Infra.Database
     ├── 📁 Repositories
     ├── 📁 Data
 └── 📁 Infra.Client
