@@ -21,7 +21,7 @@ Clean Architecture flips that dependency flow, infrastructure depends on the cor
 
 By separating concerns, you give each layer one job:
 
-## Domain Layer
+## Layer: Domain 
 
 The Domain layer should never reference any other projects in your solution. It’s designed to be completely independent of frameworks, databases, and user interfaces. This ensures that the core of your application remains isolated and free from any unnecessary dependencies, making it easier to maintain and evolve over time.
 
@@ -35,14 +35,31 @@ It knows nothing about EF Core, HTTP, or even that it’s running in a web app. 
 └── 📁 ValueObjects
 </pre>
 
-Reduced to the essential distinction, identity matters for entities, but does not matter for value objects. For example, someone's Name is a value object. A Customer entity might be composed of a customer Name (value object), List<Order> OrderHistory (List of entities), and perhaps a default Address (typically a value object). The Customer Entity would have an ID, and each order would have an ID, but a Name should not; generally, within the object model anyway, the identity of an Address probably does not matter.
+### Value Objects vs Entities (business objects with rules)
 
-### Value Objects
+Reduced to the essential distinction, identity matters for entities, but does not matter for value objects. For example, someone's Name is a value object. A Customer entity might be composed of a customer Name (value object), List<Order> OrderHistory (List of entities), and perhaps a default Address (typically a value object). The Customer Entity would have an ID, and each order would have an ID, but a Name should not; generally, within the object model anyway, the identity of an Address probably does not matter.
 
 Value objects can typically be represented as immutable objects; changing one property of a value object essentially destroys the old object and creates a new one, because you're not as concerned with identity as with content. Properly, the Equals instance method on Name would return "true" as long as the object's properties are identical to the properties of another instance.
 
-You probably create value objects without realizing it; anytime you are representing some aspect of an Entity by creating a fine-grained class, you've got a value object. For example, a class IPAddress, which has some constraints on valid values but is composed of simpler datatypes, would be a value object. An EmailAddress could be a string, or it could be a value object with its own set of behaviors. It's quite possible that even items that have an identity in your database don't have an identity in your object model.
+However, changing some attribute of an entity like Customer doesn't destroy the customer; a Customer entity is typically mutable. The identity remains the same (at least once the object has been persisted).
 
-### Entities (business objects with rules)
+You probably create value objects without realizing it; anytime you are representing some aspect of an Entity by creating a fine-grained class, you've got a value object. For example, a class IPAddress, which has some constraints on valid values but is composed of simpler datatypes, would be a value object. An EmailAddress could be a string, or it could be a value object with its own set of behaviors.
 
-Changing some attribute of an entity like Customer doesn't destroy the customer; a Customer entity is typically mutable. The identity remains the same (at least once the object has been persisted).
+It's quite possible that even items that have an identity in your database don't have an identity in your object model. But the simplest case is a composite of some attributes that make sense together. You probably don't want to have Customer.FirstName, Customer.LastName, Customer.MiddleInitial and Customer.Title when you can compose those together as Customer.Name; they'll probably be multiple fields in your database by the time you think about persistence, but your object model doesn't care.
+
+## Layer: Application
+
+It coordinates actions using the domain. Think of it as the place where you define what the system should do, without worrying how it does it.
+
+<pre>
+📁 Application
+├── 📁 Interfaces
+    ├── 📁 Repositories
+    ├── 📁 Services
+├──  📁 DTOs
+└──  📁 Services
+</pre>
+
+## Layer: Infrastructure
+
+## Layer: Presentation
