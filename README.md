@@ -53,6 +53,13 @@ It's quite possible that even items that have an identity in your database don't
 
 It coordinates actions using the domain. Think of it as the place where you define what the system should do, without worrying how it does it.
 
+The Services in Application layer will implement the use cases (Use cases are a specific type of business rule designed to be executed as a flow within an automated system).
+Example: 
+<pre>
+Logic: When a new user is created, save it and notify admin users.
+Does it create a new user in a SQL database? Does it notify admin users using a Queue? For the application layer, the details of how to do it, it doesn't matter.
+</pre>
+
 <pre>
 📁 Application
 ├── 📁 Interfaces
@@ -65,7 +72,8 @@ It coordinates actions using the domain. Think of it as the place where you defi
 ## Layer: Infrastructure
 
 This layer implements the Repository abstractions/Interfaces defined in the Application layer.
-Examples: Email providers, External API integrations, Database, Message queues and etc.
+
+The infrastructure layer handles the communication with the outer world. Examples: Email providers, External API integrations, Database, Message queues and etc.
 
 It depends on Application and Domain, but they don’t depend on it. This keeps your core logic clean and testable.
 
@@ -80,11 +88,41 @@ It depends on Application and Domain, but they don’t depend on it. This keeps 
     └── 📁 Data
 </pre>
 
+### IoC
+
+Dependency Injection (DI) is used to provide dependencies such as repositories or services to a specific layers like Presentation or Application. This promotes decoupling and makes the components easier to test.
+
+### Anti-Corruption Layer (ACL) Pattern
+
+The Anti-Corruption Layer (ACL) is a design pattern that helps maintain the integrity of your domain model when interacting with external systems. It acts as a translator between your clean system and the “corrupt” (or differently structured) external system
+
+
+Instead of letting external APIs, databases, or services infect your internal architecture, ACL ensures:
+- **Data transformation:** Converts external data formats into a structure that fits your domain model.
+- **Business logic mapping:** Filters out unnecessary complexity and aligns rules with your application.
+- **Prevents breaking changes:** Keeps business logic isolated from external inconsistencies
+
+Example:
+<pre>
+Response from endpoint is corrupted:
+- Different property name (trx_id vs PaymentId)
+- Amount as a string instead of a decimal
+
+{
+  "trx_id": "ABC123",
+  "payment_total": "100.50",
+  "curr": "USD",
+  "state": "success"
+}
+</pre>
+
 ## Layer: Presentation
 
 This is how users or clients interact with your app.
 
 It receives input, calls the Application layer, and returns output. No business rules here, just translation between the outside world and your system.
+
+The presentation is interchangeable. You should be able to switch to another presentation such as an android, iOS, web single-page application or desktop application without altering the rest of the app.
 
 <pre>
 📁 Presentation
