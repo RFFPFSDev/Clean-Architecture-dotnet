@@ -15,6 +15,8 @@ Clean Architecture flips that dependency flow, infrastructure depends on the cor
 - **Testability:** Clean Architecture encourages writing unit tests for the business logic independently of external dependencies. This separation allows for efficient and comprehensive testing of the core functionality without requiring integration tests for every minor change.
 - **Dependency Rule:** Dependencies should point inward, towards the core of the application. Outer layers depend on inner layers, but inner layers are independent of outer layers.
 
+The flow goes inward: Presentation → Application → Domain
+
 ![alt text](cleanarchitecture.png)
 
 # Separating concerns:
@@ -62,4 +64,31 @@ It coordinates actions using the domain. Think of it as the place where you defi
 
 ## Layer: Infrastructure
 
+This layer implements the Repository abstractions/Interfaces defined in the Application layer.
+Examples: Email providers, External API integrations, Database, Message queues and etc.
+
+It depends on Application and Domain, but they don’t depend on it. This keeps your core logic clean and testable.
+
+<pre>
+📁 Infra
+├── 📁 Infra.IoC
+├──📁 Infra.Database
+    ├── 📁 Repositories
+    ├── 📁 Data
+└── 📁 Infra.Client
+    ├── 📁 HttpClients
+    └── 📁 Data
+</pre>
+
 ## Layer: Presentation
+
+This is how users or clients interact with your app.
+
+It receives input, calls the Application layer, and returns output. No business rules here, just translation between the outside world and your system.
+
+<pre>
+📁 Presentation
+├── 📁 Controllers
+├── 📁 Middlewares
+└── 📁 Extensions
+</pre>
