@@ -27,13 +27,13 @@ The Domain layer should never reference any other projects in your solution. It�
 
 It knows nothing about EF Core, HTTP, or even that it’s running in a web app. It’s 100% pure C#, and that’s the point.
 
-<pre> ## Domain Folder Structure ```
+<pre>
 📁 Domain
 ├── 📁 Entities
 ├── 📁 Enums
 ├── 📁 Constants
 └── 📁 ValueObjects
-``` </pre>
+</pre>
 
 Reduced to the essential distinction, identity matters for entities, but does not matter for value objects. For example, someone's Name is a value object. A Customer entity might be composed of a customer Name (value object), List<Order> OrderHistory (List of entities), and perhaps a default Address (typically a value object). The Customer Entity would have an ID, and each order would have an ID, but a Name should not; generally, within the object model anyway, the identity of an Address probably does not matter.
 
