@@ -90,7 +90,11 @@ It depends on Application and Domain, but they don’t depend on it. This keeps 
 
 ### IoC
 
-Dependency Injection (DI) is used to provide dependencies such as repositories or services to a specific layers like Presentation or Application. This promotes decoupling and makes the components easier to test.
+Dependency Injection (DI) is used to provide dependencies to a Layer. Example: Provide Infra repository implementations to Application layer. This promotes decoupling and makes the components easier to test. It uses Dependency Inversion Principle.
+
+#### Dependency Inversion Principle
+
+High levels of modules should not be dependent on low levels of modules. Both should follow abstractions (e.g., interfaces).
 
 ### Anti-Corruption Layer (ACL) Pattern
 
